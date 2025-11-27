@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Article, getArticles } from "./api/articles";
+import { type Article, getArticles } from "../api/articles";
 
 export function ArticlesList() {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -14,7 +14,7 @@ export function ArticlesList() {
     if (loading) return <p>Uèitavanje...</p>;
 
     return (
-        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+        <div>
             <h1>Novosti</h1>
             {articles.map(a => (
                 <article key={a.id} style={{ marginBottom: "1.5rem" }}>

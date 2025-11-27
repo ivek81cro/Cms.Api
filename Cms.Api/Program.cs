@@ -3,27 +3,29 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// 1. Servisi
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Frontend", p =>
-        p.WithOrigins("http://localhost:5173")  // Vite
-         .AllowAnyHeader()
-         .AllowAnyMethod());
-});
+// 2. CORS – najjednostavnije: dozvoli frontend localhost:5173
+builder.Services.AddCors();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 3. CORS middleware – MORA biti prije MapControllers
+app.UseCors(policy =>
+    policy
+        .WithOrigins("http://localhost:5173") // Vite dev server
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+);
+
+// Swagger i ostalo
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -31,7 +33,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// Ako ne koristiš auth, možeš i izostaviti UseAuthorization
+// app.UseAuthorization();
 
 app.MapControllers();
 
