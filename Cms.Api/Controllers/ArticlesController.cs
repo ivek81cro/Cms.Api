@@ -42,6 +42,12 @@ public class ArticlesController : ControllerBase
     public async Task<ActionResult<Article>> Create([FromBody] Article article)
     {
         article.CreatedAt = DateTime.UtcNow;
+
+        if (article.IsPublished && article.PublishedAt == null)
+        {
+            article.PublishedAt = DateTime.UtcNow;
+        }
+
         _db.Articles.Add(article);
         await _db.SaveChangesAsync();
 
@@ -51,8 +57,6 @@ public class ArticlesController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] Article updated)
     {
-        if (id != updated.Id) return BadRequest();
-
         var existing = await _db.Articles.FindAsync(id);
         if (existing == null) return NotFound();
 
@@ -60,8 +64,17 @@ public class ArticlesController : ControllerBase
         existing.Slug = updated.Slug;
         existing.Excerpt = updated.Excerpt;
         existing.ContentHtml = updated.ContentHtml;
+
         existing.IsPublished = updated.IsPublished;
-        existing.PublishedAt = updated.PublishedAt;
+        if (updated.IsPublished && existing.PublishedAt == null)
+        {
+            existing.PublishedAt = DateTime.UtcNow;
+        }
+        else if (!updated.IsPublished)
+        {
+            existing.PublishedAt = null;
+        }
+
         existing.GalleryId = updated.GalleryId;
 
         await _db.SaveChangesAsync();
