@@ -1,5 +1,6 @@
-﻿using Cms.Api.Data;
+using Cms.Api.Data;
 using Cms.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ public class ArticlesController : ControllerBase
         _db = db;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Article>>> GetAll()
     {
@@ -26,6 +28,7 @@ public class ArticlesController : ControllerBase
         return Ok(articles);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Article>> GetById(int id)
     {
@@ -38,6 +41,7 @@ public class ArticlesController : ControllerBase
         return Ok(article);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<Article>> Create([FromBody] Article article)
     {
@@ -54,6 +58,7 @@ public class ArticlesController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = article.Id }, article);
     }
 
+    [Authorize]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] Article updated)
     {
@@ -81,6 +86,7 @@ public class ArticlesController : ControllerBase
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
