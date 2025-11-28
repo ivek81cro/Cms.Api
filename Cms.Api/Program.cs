@@ -1,7 +1,9 @@
 using Cms.Api.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,37 +15,68 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Frontend", p =>
-        p.WithOrigins("http://localhost:5173")
-         .AllowAnyHeader()
-         .AllowAnyMethod());
-});
+// Identity za API (bez Razor UI)
+builder.Services
+    .AddIdentityCore<IdentityUser>(options =>
+    {
+        // olakšaj si lozinke za početak
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequiredLength = 6;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
 
-// JWT auth (values come from configuration, not hardcoded)
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+// JWT auth
+var jwtSection = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSection["Key"]!);
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = true;
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            ValidIssuer = jwtSection["Issuer"],
+            ValidAudience = jwtSection["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
         };
     });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", p =>
+    {
+        p.WithOrigins("http://localhost:5173")
+         .AllowAnyHeader()
+         .AllowAnyMethod()
+         .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference("/api-docs", options =>
+    {
+        options.WithTitle("Gymkhana CMS API");
+    });
 }
 
 app.UseHttpsRedirection();

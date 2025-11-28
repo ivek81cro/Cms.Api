@@ -26,13 +26,18 @@ public class AuthController : ControllerBase
         _config = config;
     }
 
+    // POST: /api/auth/register
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest request)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        // provjera postoji li već korisnik s tim mailom
         var existing = await _userManager.FindByEmailAsync(request.Email);
         if (existing != null)
         {
-            return BadRequest("Korisnik s tom e-mail adresom već postoji.");
+            return BadRequest(new { error = "Korisnik s tom adresom e-pošte već postoji." });
         }
 
         var user = new IdentityUser
@@ -45,51 +50,72 @@ public class AuthController : ControllerBase
 
         if (!result.Succeeded)
         {
-            return BadRequest(result.Errors);
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+
+            return ValidationProblem(ModelState);
         }
 
-        return Ok();
+        var tokenString = GenerateJwtToken(user, out var expiresAt);
+
+        return Ok(new AuthResponse
+        {
+            Token = tokenString,
+            Email = user.Email ?? string.Empty,
+            ExpiresAt = expiresAt
+        });
     }
 
+    // POST: /api/auth/login
     [HttpPost("login")]
     public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest request)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
-            return Unauthorized("Neispravan e-mail ili lozinka.");
+            return Unauthorized(new { error = "Neispravni podaci za prijavu." });
         }
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        var result = await _signInManager.CheckPasswordSignInAsync(
+            user, request.Password, lockoutOnFailure: false);
+
         if (!result.Succeeded)
         {
-            return Unauthorized("Neispravan e-mail ili lozinka.");
+            return Unauthorized(new { error = "Neispravni podaci za prijavu." });
         }
 
-        var token = GenerateJwtToken(user, out DateTime expires);
+        var tokenString = GenerateJwtToken(user, out var expiresAt);
 
-        return new AuthResponse
+        return Ok(new AuthResponse
         {
-            Token = token,
-            ExpiresAt = expires,
-            Email = user.Email ?? ""
-        };
+            Token = tokenString,
+            Email = user.Email ?? string.Empty,
+            ExpiresAt = expiresAt
+        });
     }
 
     private string GenerateJwtToken(IdentityUser user, out DateTime expires)
     {
         var jwtSection = _config.GetSection("Jwt");
+
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtSection["Key"]!));
+
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email ?? ""),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
+        // Rok trajanja tokena
         expires = DateTime.UtcNow.AddMinutes(
             double.Parse(jwtSection["ExpiresMinutes"]!));
 

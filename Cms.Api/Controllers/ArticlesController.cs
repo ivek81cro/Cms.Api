@@ -1,5 +1,6 @@
 using Cms.Api.Data;
 using Cms.Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +18,8 @@ public class ArticlesController : ControllerBase
         _db = db;
     }
 
-    [AllowAnonymous]
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<Article>>> GetAll()
     {
         var articles = await _db.Articles
@@ -28,8 +29,8 @@ public class ArticlesController : ControllerBase
         return Ok(articles);
     }
 
-    [AllowAnonymous]
     [HttpGet("{id:int}")]
+    [AllowAnonymous]
     public async Task<ActionResult<Article>> GetById(int id)
     {
         var article = await _db.Articles
@@ -41,8 +42,8 @@ public class ArticlesController : ControllerBase
         return Ok(article);
     }
 
-    [Authorize]
     [HttpPost]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<Article>> Create([FromBody] Article article)
     {
         article.CreatedAt = DateTime.UtcNow;
@@ -58,8 +59,8 @@ public class ArticlesController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = article.Id }, article);
     }
 
-    [Authorize]
     [HttpPut("{id:int}")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> Update(int id, [FromBody] Article updated)
     {
         var existing = await _db.Articles.FindAsync(id);
@@ -86,8 +87,8 @@ public class ArticlesController : ControllerBase
         return NoContent();
     }
 
-    [Authorize]
     [HttpDelete("{id:int}")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> Delete(int id)
     {
         var article = await _db.Articles.FindAsync(id);

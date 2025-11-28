@@ -35,7 +35,7 @@ export function AdminArticleForm() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // U�itaj �lanak u edit modu
+    // Učitaj članak u edit modu
     useEffect(() => {
         if (!isEditMode) return;
 

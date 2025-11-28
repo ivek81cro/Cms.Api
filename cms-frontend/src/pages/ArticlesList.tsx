@@ -11,7 +11,7 @@ export function ArticlesList() {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <p>Uèitavanje...</p>;
+    if (loading) return <p>UÄitavanje...</p>;
 
     return (
         <div>
