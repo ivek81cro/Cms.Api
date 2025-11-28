@@ -1,32 +1,31 @@
-// src/pages/RegisterPage.tsx
 import { useState } from "react";
-import { register, RegisterRequest, AuthResponse } from "../api/auth";
+import { register, RegisterRequest } from "../api/auth";
+import { useAuth } from "../auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
     const [form, setForm] = useState<RegisterRequest>({
         email: "",
         password: "",
     });
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<AuthResponse | null>(null);
+
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError(null);
-        setSuccess(null);
         setLoading(true);
 
         try {
             const result = await register(form);
-
-            // spremi token za daljnje pozive
-            localStorage.setItem("authToken", result.token);
-            setSuccess(result);
-        } catch (err: any) {
+            login(result);           // <- centralni login
+            navigate("/");           // ili na /admin, /articles itd.
+        } catch (err) {
             console.error(err);
-            setError("Registracija nije uspjela. Provjeri email i lozinku.");
+            setError("Registracija nije uspjela.");
         } finally {
             setLoading(false);
         }

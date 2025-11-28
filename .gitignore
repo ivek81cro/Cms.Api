@@ -362,3 +362,24 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Cms.Api/appsettings.json
+
+.vs/
+bin/
+obj/
+*.user
+*.suo
+node_modules/
+.env
+.env.*
+appsettings.Development.json
+appsettings.*.local.json
+secrets.json
+secrets.*
+*.log
+*.pfx
+*.key
+*.pem
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
