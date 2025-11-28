@@ -1,0 +1,48 @@
+/* Top navigation bar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb; /* light gray */
+    z-index: 1000;
+}
+
+.navbar__content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar__brandLink {
+    font-weight: bold;
+    text-decoration: none;
+    color: #4ea3ff;
+}
+
+.navbar__links {
+    display: flex;
+    gap: 12px;
+}
+
+.navbar__link {
+    text-decoration: none;
+    color: #4ea3ff;
+}
+
+/* Layout container and main spacing to avoid overlap with fixed navbar */
+.layout {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.layout__main {
+    padding-top: 72px; /* accounts for fixed navbar height + spacing */
+}
