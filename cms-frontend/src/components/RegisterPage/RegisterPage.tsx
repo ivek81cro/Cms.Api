@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { register, RegisterRequest } from "../api/auth";
-import { useAuth } from "../auth/AuthContext";
+import { register, type RegisterRequest } from "../../api/auth";
+import { useAuth } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
@@ -14,14 +14,14 @@ export default function RegisterPage() {
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    async function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError(null);
         setLoading(true);
 
         try {
             const result = await register(form);
-            login(result);           // <- centralni login
+            login(result);           // centralni login
             navigate("/");           // ili na /admin, /articles itd.
         } catch (err) {
             console.error(err);
@@ -63,11 +63,6 @@ export default function RegisterPage() {
                 </div>
 
                 {error && <div className="alert alert-danger">{error}</div>}
-                {success && (
-                    <div className="alert alert-success">
-                        Registracija uspješna, prijavljen si kao {success.email}.
-                    </div>
-                )}
 
                 <button className="btn btn-primary" type="submit" disabled={loading}>
                     {loading ? "Registriram..." : "Registriraj se"}

@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { login } from "../api/auth";
+import { login as apiLogin } from "../api/auth";
+import { useAuth, type AuthResponse } from "../auth/AuthContext";
 
 interface LocationState {
     from?: { pathname: string };
@@ -10,21 +11,23 @@ export function LoginPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const state = location.state as LocationState | undefined;
+    const { login: ctxLogin } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
 
         try {
-            const result = await login({ email, password });
-            localStorage.setItem("authToken", result.token);
-            // vrati se gdje je htio ići ili na admin/articles
+            const result = await apiLogin({ email, password }) as AuthResponse;
+            // Update global auth state -> NavBar switches to Logout immediately
+            ctxLogin(result);
+
             const redirectTo = state?.from?.pathname ?? "/admin/articles";
             navigate(redirectTo, { replace: true });
         } catch (err) {
