@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { register, type RegisterRequest } from "../../api/auth";
-import { useAuth } from "../../auth/AuthContext";
+import { register, type RegisterRequest } from "../api/auth";
+import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {

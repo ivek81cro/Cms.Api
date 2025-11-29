@@ -7,7 +7,7 @@ import { AdminArticlesList } from "./pages/AdminArticlesList";
 import { AdminArticleForm } from "./pages/AdminArticleForm";
 import { Layout } from "./components/Layout";
 import { LoginPage } from "./pages/LoginPage";
-import RegisterPage from "./components/RegisterPage/RegisterPage";
+import RegisterPage from "./pages/RegisterPage";
 import { RequireAuth } from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthContext";
 import "./index.css";
