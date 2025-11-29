@@ -14,23 +14,36 @@ export function ArticlesList() {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <p>Učitavanje...</p>;
-    if (error) return <p style={{ color: "red" }}>{error}</p>;
+    if (loading) return <div className="container"><p>Učitavanje...</p></div>;
+    if (error) return <div className="container"><p style={{ color: "red" }}>{error}</p></div>;
+
+    // Prikazuj samo objavljene članke
+    const published = articles.filter(a => a.isPublished);
 
     return (
-        <div>
+        <div className="container">
             <h1>Novosti</h1>
-            {articles.map(a => (
-                <article key={a.id} style={{ marginBottom: "1.5rem" }}>
-                    <h2 style={{ margin: 0 }}>
-                        <Link to={`/articles/${a.id}`} style={{ textDecoration: "none", color: "#1e3a8a" }}>
-                            {a.title}
+            <div className="cards">
+                {published.map(a => (
+                    <article key={a.id} className="card">
+                        <h2 className="card__title">
+                            <Link to={`/articles/${a.id}`}>{a.title}</Link>
+                        </h2>
+                        {a.publishedAt && (
+                            <div className="article-meta">
+                                Objavljeno: {new Date(a.publishedAt).toLocaleDateString()}
+                            </div>
+                        )}
+                        <p className="card__excerpt">{a.excerpt}</p>
+                        <Link to={`/articles/${a.id}`} className="navbar__link">
+                            Pročitaj više →
                         </Link>
-                    </h2>
-                    <p style={{ margin: "0.5rem 0 0.75rem" }}>{a.excerpt}</p>
-                    <Link to={`/articles/${a.id}`}>Pročitaj više →</Link>
-                </article>
-            ))}
+                    </article>
+                ))}
+                {published.length === 0 && (
+                    <p style={{ color: "#6b7280" }}>Nema objavljenih članaka.</p>
+                )}
+            </div>
         </div>
     );
 }

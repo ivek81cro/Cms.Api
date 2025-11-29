@@ -9,7 +9,9 @@ export function Layout({ children }: LayoutProps) {
     return (
         <div className="layout">
             <NavBar />
-            <main className="layout__main">{children}</main>
+            <main className="layout__main">
+                {children}
+            </main>
         </div>
     );
 }

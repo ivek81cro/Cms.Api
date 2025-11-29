@@ -17,15 +17,45 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <AuthProvider>
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<Layout><ArticlesList /></Layout>} />
-                    <Route path="/articles/:id" element={<Layout><ArticleDetails /></Layout>} />
-                    <Route path="/login" element={<Layout><LoginPage /></Layout>} />
-                    <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
+                    <Route
+                        path="/"
+                        element={
+                            <Layout>
+                                <ArticlesList />
+                            </Layout>
+                        }
+                    />
+                    <Route
+                        path="/articles/:id"
+                        element={
+                            <Layout>
+                                <ArticleDetails />
+                            </Layout>
+                        }
+                    />
+                    <Route
+                        path="/login"
+                        element={
+                            <Layout>
+                                <LoginPage />
+                            </Layout>
+                        }
+                    />
+                    <Route
+                        path="/register"
+                        element={
+                            <Layout>
+                                <RegisterPage />
+                            </Layout>
+                        }
+                    />
                     <Route
                         path="/admin/articles"
                         element={
                             <RequireAuth>
-                                <Layout><AdminArticlesList /></Layout>
+                                <Layout>
+                                    <AdminArticlesList />
+                                </Layout>
                             </RequireAuth>
                         }
                     />
@@ -33,7 +63,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                         path="/admin/articles/new"
                         element={
                             <RequireAuth>
-                                <Layout><AdminArticleForm /></Layout>
+                                <Layout>
+                                    <AdminArticleForm />
+                                </Layout>
                             </RequireAuth>
                         }
                     />
@@ -41,7 +73,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
                         path="/admin/articles/:id"
                         element={
                             <RequireAuth>
-                                <Layout><AdminArticleForm /></Layout>
+                                <Layout>
+                                    <AdminArticleForm />
+                                </Layout>
                             </RequireAuth>
                         }
                     />

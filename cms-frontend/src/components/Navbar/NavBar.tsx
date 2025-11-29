@@ -1,26 +1,36 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./NavBar.css";
 import { useAuth } from "../../auth/AuthContext";
 
 export function NavBar() {
     const { userEmail, logout } = useAuth();
+    const navigate = useNavigate();
+
+    // Jedan link "Članci":
+    // - ulogiran -> vodi na admin uređivanje
+    // - nije ulogiran -> vodi na javnu listu
+    const articlesHref = userEmail ? "/admin/articles" : "/";
+
+
+    const handleLogout = () => {
+        logout();
+        navigate("/", { replace: true });
+    };
 
     return (
         <header className="navbar">
             <div className="navbar__content">
+                {/* Brand */}
                 <div className="navbar__brand">
                     <Link to="/" className="navbar__brandLink">CMS</Link>
                 </div>
 
+                {/* Glavni linkovi */}
                 <nav className="navbar__links">
-                    <Link to="/" className="navbar__link">Članci</Link>
-                    {userEmail && (
-                        <Link to="/admin/articles" className="navbar__link">
-                            Admin – članci
-                        </Link>
-                    )}
+                    <Link to={articlesHref} className="navbar__link">Članci</Link>
                 </nav>
 
+                {/* Auth dio desno */}
                 <div className="navbar__auth">
                     {!userEmail ? (
                         <>
@@ -33,7 +43,7 @@ export function NavBar() {
                             <button
                                 type="button"
                                 className="navbar__link navbar__logoutButton"
-                                onClick={logout}
+                                onClick={handleLogout}
                             >
                                 Logout
                             </button>
