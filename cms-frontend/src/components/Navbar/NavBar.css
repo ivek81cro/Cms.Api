@@ -2,16 +2,17 @@
 .navbar {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 56px;
-  background: #ffffff;
-  border-bottom: 1px solid var(--color-border);
+  height: 70px;
+  background: var(--color-bg-card);
+  border-bottom: 2px solid var(--color-primary);
   z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 .navbar__content {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 24px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -20,51 +21,70 @@
 
 .navbar__brandLink {
   font-weight: 700;
+  font-size: 1.5rem;
   color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.navbar__brandLink:hover {
+  color: var(--color-primary-hover);
 }
 
 .navbar__links {
   display: flex;
-  gap: 12px;
+  gap: 24px;
+  flex: 1;
+  justify-content: center;
 }
 
 .navbar__link {
-  color: var(--color-primary);
+  color: var(--color-text);
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .navbar__link:hover {
-  color: var(--color-primary-hover);
+  color: var(--color-primary);
+  background: rgba(249, 115, 22, 0.1);
 }
 
 .navbar__auth {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
 }
 
 .navbar__user {
   color: var(--color-muted);
   font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .navbar__logoutButton {
   background: transparent;
-  border: 1px solid var(--color-border);
-  padding: 6px 10px;
-  border-radius: 8px;
+  border: 1px solid var(--color-primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  color: var(--color-primary);
+  font-weight: 500;
 }
 
 .navbar__logoutButton:hover {
-  background: #f3f4f6;
+  background: var(--color-primary);
+  color: #fff;
 }
 
 /* Layout container and main spacing to avoid overlap with fixed navbar */
 .layout {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 16px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .layout__main {
-    padding-top: 72px; /* accounts for fixed navbar height + spacing */
+    flex: 1;
+    padding-top: 90px; /* accounts for fixed navbar height + spacing */
 }

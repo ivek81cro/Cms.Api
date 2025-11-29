@@ -1,10 +1,11 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ArticlesList } from "./pages/ArticlesList";
+import { ArticleDetails } from "./pages/ArticleDetails";
 import { AdminArticlesList } from "./pages/AdminArticlesList";
 import { AdminArticleForm } from "./pages/AdminArticleForm";
 import { Layout } from "./components/Layout";
 import { LoginPage } from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import { RequireAuth } from "./auth/RequireAuth";
 import "./index.css";
 
@@ -13,7 +14,9 @@ export function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Layout><ArticlesList /></Layout>} />
+                <Route path="/articles/:id" element={<Layout><ArticleDetails /></Layout>} />
                 <Route path="/login" element={<Layout><LoginPage /></Layout>} />
+                <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
                 <Route
                     path="/admin/articles"
                     element={

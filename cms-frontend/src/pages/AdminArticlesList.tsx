@@ -35,49 +35,68 @@ export function AdminArticlesList() {
         }
     };
 
-    if (loading) return <p>Učitavanje...</p>;
-    if (error) return <p>{error}</p>;
+    if (loading) return <div className="container"><p>Učitavanje...</p></div>;
+    if (error) return <div className="container"><p style={{color: 'var(--color-primary)'}}>{error}</p></div>;
 
     return (
-        <div>
-            <h1>Admin – članci</h1>
+        <div className="container">
+            <h1>Admin – Članci</h1>
 
             <button
                 onClick={() => navigate("/admin/articles/new")}
-                style={{ marginBottom: "1rem" }}
+                style={{ marginBottom: "1.5rem" }}
             >
                 + Novi članak
             </button>
 
             {articles.length === 0 ? (
-                <p>Nema članaka.</p>
+                <p style={{color: 'var(--color-muted)'}}>Nema članaka.</p>
             ) : (
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <thead>
-                        <tr>
-                            <th style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>Naslov</th>
-                            <th style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>Objavljen</th>
-                            <th style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>Akcije</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {articles.map(a => (
-                            <tr key={a.id}>
-                                <td style={{ padding: "0.4rem 0" }}>{a.title}</td>
-                                <td>{a.isPublished ? "Da" : "Ne"}</td>
-                                <td>
-                                    <Link
-                                        to={`/admin/articles/${a.id}`}
-                                        style={{ marginRight: "0.5rem" }}
-                                    >
-                                        Uredi
-                                    </Link>
-                                    <button onClick={() => handleDelete(a.id)}>Obriši</button>
-                                </td>
+                <div style={{
+                    background: 'var(--color-bg-card)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    overflowX: 'auto'
+                }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead>
+                            <tr>
+                                <th style={{ textAlign: "left", borderBottom: "2px solid var(--color-border)", paddingBottom: '12px', color: 'var(--color-primary)' }}>Naslov</th>
+                                <th style={{ textAlign: "left", borderBottom: "2px solid var(--color-border)", paddingBottom: '12px', color: 'var(--color-primary)' }}>Objavljen</th>
+                                <th style={{ textAlign: "left", borderBottom: "2px solid var(--color-border)", paddingBottom: '12px', color: 'var(--color-primary)' }}>Akcije</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {articles.map(a => (
+                                <tr key={a.id} style={{borderBottom: '1px solid var(--color-border)'}}>
+                                    <td style={{ padding: "16px 0" }}>{a.title}</td>
+                                    <td>{a.isPublished ? "Da" : "Ne"}</td>
+                                    <td>
+                                        <Link
+                                            to={`/admin/articles/${a.id}`}
+                                            style={{ marginRight: "12px", color: 'var(--color-primary)', fontWeight: 500 }}
+                                        >
+                                            Uredi
+                                        </Link>
+                                        <button 
+                                            onClick={() => handleDelete(a.id)}
+                                            style={{
+                                                background: 'transparent',
+                                                border: '1px solid #ef4444',
+                                                color: '#ef4444',
+                                                padding: '6px 12px',
+                                                fontSize: '0.9rem'
+                                            }}
+                                        >
+                                            Obriši
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );

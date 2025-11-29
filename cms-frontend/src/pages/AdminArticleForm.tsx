@@ -102,18 +102,24 @@ export function AdminArticleForm() {
         }
     };
 
-    if (loading) return <p>Učitavanje...</p>;
-    if (error) return <p>{error}</p>;
+    if (loading) return <div className="container"><p>Učitavanje...</p></div>;
+    if (error) return <div className="container"><p style={{color: 'var(--color-primary)'}}>{error}</p></div>;
 
     return (
-        <div>
+        <div className="container" style={{ maxWidth: 900 }}>
             <h1>{isEditMode ? "Uredi članak" : "Novi članak"}</h1>
 
-            <form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
-                <div style={{ marginBottom: "0.8rem" }}>
-                    <label>
-                        Naslov
-                        <br />
+            <div style={{
+                background: 'var(--color-bg-card)',
+                padding: '2rem',
+                borderRadius: '12px',
+                border: '1px solid var(--color-border)'
+            }}>
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: "1rem" }}>
+                        <label>
+                            Naslov
+                        </label>
                         <input
                             type="text"
                             name="title"
@@ -121,70 +127,77 @@ export function AdminArticleForm() {
                             onChange={handleChange}
                             onBlur={handleTitleBlur}
                             required
-                            style={{ width: "100%" }}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <div style={{ marginBottom: "0.8rem" }}>
-                    <label>
-                        Slug (URL)
-                        <br />
+                    <div style={{ marginBottom: "1rem" }}>
+                        <label>
+                            Slug (URL)
+                        </label>
                         <input
                             type="text"
                             name="slug"
                             value={form.slug}
                             onChange={handleChange}
                             required
-                            style={{ width: "100%" }}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <div style={{ marginBottom: "0.8rem" }}>
-                    <label>
-                        Kratki sažetak
-                        <br />
+                    <div style={{ marginBottom: "1rem" }}>
+                        <label>
+                            Kratki sažetak
+                        </label>
                         <textarea
                             name="excerpt"
                             value={form.excerpt}
                             onChange={handleChange}
                             rows={3}
-                            style={{ width: "100%" }}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <div style={{ marginBottom: "0.8rem" }}>
-                    <label>
-                        Sadržaj (HTML ili tekst)
-                        <br />
+                    <div style={{ marginBottom: "1rem" }}>
+                        <label>
+                            Sadržaj (HTML ili tekst)
+                        </label>
                         <textarea
                             name="contentHtml"
                             value={form.contentHtml}
                             onChange={handleChange}
-                            rows={10}
-                            style={{ width: "100%" }}
+                            rows={12}
                         />
-                    </label>
-                </div>
+                    </div>
 
-                <div style={{ marginBottom: "0.8rem" }}>
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="isPublished"
-                            checked={form.isPublished}
-                            onChange={handleChange}
-                        />{" "}
-                        Objavljeno
-                    </label>
-                </div>
+                    <div style={{ marginBottom: "1.5rem" }}>
+                        <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}>
+                            <input
+                                type="checkbox"
+                                name="isPublished"
+                                checked={form.isPublished}
+                                onChange={handleChange}
+                                style={{width: 'auto'}}
+                            />
+                            Objavljeno
+                        </label>
+                    </div>
 
-                <button type="submit" disabled={saving}>
-                    {saving ? "Spremam..." : "Spremi"}
-                </button>
-            </form>
+                    <div style={{display: 'flex', gap: '12px'}}>
+                        <button type="submit" disabled={saving}>
+                            {saving ? "Spremam..." : "Spremi"}
+                        </button>
+                        <button 
+                            type="button" 
+                            onClick={() => navigate("/admin/articles")}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid var(--color-border)',
+                                color: 'var(--color-text)'
+                            }}
+                        >
+                            Odustani
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

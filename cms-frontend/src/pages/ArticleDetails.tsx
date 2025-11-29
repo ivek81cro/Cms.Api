@@ -25,18 +25,22 @@ export function ArticleDetails() {
         return () => { cancelled = true; };
     }, [articleId, isInvalidId]);
 
-    if (isInvalidId) return <div className="container"><p style={{ color: "red" }}>Neispravan ID članka.</p></div>;
+    if (isInvalidId) return <div className="container"><p style={{ color: "var(--color-primary)" }}>Neispravan ID članka.</p></div>;
     if (loading) return <div className="container"><p>Učitavanje...</p></div>;
-    if (error) return <div className="container"><p style={{ color: "red" }}>{error}</p></div>;
+    if (error) return <div className="container"><p style={{ color: "var(--color-primary)" }}>{error}</p></div>;
     if (!article) return <div className="container"><p>Članak nije pronađen.</p></div>;
 
     return (
         <div className="container">
-            <p><Link to="/">{`←`} Natrag na članke</Link></p>
+            <p><Link to="/" style={{color: 'var(--color-primary)', fontWeight: 500}}>{`← Natrag na članke`}</Link></p>
             <h1>{article.title}</h1>
             {article.publishedAt && (
                 <p className="article-meta">
-                    Objavljeno: {new Date(article.publishedAt).toLocaleDateString()}
+                    Objavljeno: {new Date(article.publishedAt).toLocaleDateString('hr-HR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}
                 </p>
             )}
             <div className="article-details" dangerouslySetInnerHTML={{ __html: article.contentHtml }} />

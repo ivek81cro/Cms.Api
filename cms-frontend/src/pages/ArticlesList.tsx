@@ -21,29 +21,38 @@ export function ArticlesList() {
     const published = articles.filter(a => a.isPublished);
 
     return (
-        <div className="container">
-            <h1>Novosti</h1>
-            <div className="cards">
-                {published.map(a => (
-                    <article key={a.id} className="card">
-                        <h2 className="card__title">
-                            <Link to={`/articles/${a.id}`}>{a.title}</Link>
-                        </h2>
-                        {a.publishedAt && (
-                            <div className="article-meta">
-                                Objavljeno: {new Date(a.publishedAt).toLocaleDateString()}
-                            </div>
-                        )}
-                        <p className="card__excerpt">{a.excerpt}</p>
-                        <Link to={`/articles/${a.id}`} className="navbar__link">
-                            Pročitaj više →
-                        </Link>
-                    </article>
-                ))}
-                {published.length === 0 && (
-                    <p style={{ color: "#6b7280" }}>Nema objavljenih članaka.</p>
-                )}
+        <>
+            <section className="hero">
+                <div className="container">
+                    <h1>Moto Gymkhana Croatia</h1>
+                    <p>Škola sigurne vožnje • Treninzi • Natjecanja</p>
+                </div>
+            </section>
+
+            <div className="container">
+                <h2>Najnovije Vijesti</h2>
+                <div className="cards">
+                    {published.map(a => (
+                        <article key={a.id} className="card">
+                            <h2 className="card__title">
+                                <Link to={`/articles/${a.id}`}>{a.title}</Link>
+                            </h2>
+                            {a.publishedAt && (
+                                <div className="article-meta">
+                                    Objavljeno: {new Date(a.publishedAt).toLocaleDateString('hr-HR')}
+                                </div>
+                            )}
+                            <p className="card__excerpt">{a.excerpt}</p>
+                            <Link to={`/articles/${a.id}`} className="navbar__link">
+                                Pročitaj više →
+                            </Link>
+                        </article>
+                    ))}
+                    {published.length === 0 && (
+                        <p style={{ color: "var(--color-muted)" }}>Nema objavljenih članaka.</p>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }

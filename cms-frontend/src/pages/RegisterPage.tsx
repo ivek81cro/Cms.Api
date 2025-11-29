@@ -32,42 +32,47 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="container mt-4">
-            <h2>Registracija</h2>
+        <div className="container" style={{ maxWidth: 500, marginTop: "3rem" }}>
+            <div style={{
+                background: 'var(--color-bg-card)',
+                padding: '2rem',
+                borderRadius: '12px',
+                border: '1px solid var(--color-border)'
+            }}>
+                <h1>Registracija</h1>
 
-            <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
-                <div className="mb-3">
-                    <label className="form-label">Email</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        value={form.email}
-                        onChange={(e) =>
-                            setForm((f) => ({ ...f, email: e.target.value }))
-                        }
-                        required
-                    />
-                </div>
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: "1rem" }}>
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            value={form.email}
+                            onChange={(e) =>
+                                setForm((f) => ({ ...f, email: e.target.value }))
+                            }
+                            required
+                        />
+                    </div>
 
-                <div className="mb-3">
-                    <label className="form-label">Lozinka</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={form.password}
-                        onChange={(e) =>
-                            setForm((f) => ({ ...f, password: e.target.value }))
-                        }
-                        required
-                    />
-                </div>
+                    <div style={{ marginBottom: "1rem" }}>
+                        <label>Lozinka</label>
+                        <input
+                            type="password"
+                            value={form.password}
+                            onChange={(e) =>
+                                setForm((f) => ({ ...f, password: e.target.value }))
+                            }
+                            required
+                        />
+                    </div>
 
-                {error && <div className="alert alert-danger">{error}</div>}
+                    {error && <p style={{ color: "var(--color-primary)", marginBottom: '1rem' }}>{error}</p>}
 
-                <button className="btn btn-primary" type="submit" disabled={loading}>
-                    {loading ? "Registriram..." : "Registriraj se"}
-                </button>
-            </form>
+                    <button type="submit" disabled={loading} style={{width: '100%'}}>
+                        {loading ? "Registriram..." : "Registriraj se"}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }

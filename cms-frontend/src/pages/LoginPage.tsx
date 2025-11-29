@@ -39,40 +39,43 @@ export function LoginPage() {
     };
 
     return (
-        <div style={{ maxWidth: 400, margin: "2rem auto" }}>
-            <h1>Prijava</h1>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: "0.8rem" }}>
-                    <label>
-                        E-mail
-                        <br />
+        <div className="container" style={{ maxWidth: 500, marginTop: "3rem" }}>
+            <div style={{
+                background: 'var(--color-bg-card)',
+                padding: '2rem',
+                borderRadius: '12px',
+                border: '1px solid var(--color-border)'
+            }}>
+                <h1>Prijava</h1>
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: "1rem" }}>
+                        <label>
+                            E-mail
+                        </label>
                         <input
                             type="email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             required
-                            style={{ width: "100%" }}
                         />
-                    </label>
-                </div>
-                <div style={{ marginBottom: "0.8rem" }}>
-                    <label>
-                        Lozinka
-                        <br />
+                    </div>
+                    <div style={{ marginBottom: "1rem" }}>
+                        <label>
+                            Lozinka
+                        </label>
                         <input
                             type="password"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                             required
-                            style={{ width: "100%" }}
                         />
-                    </label>
-                </div>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <button type="submit" disabled={loading}>
-                    {loading ? "Prijava..." : "Prijavi se"}
-                </button>
-            </form>
+                    </div>
+                    {error && <p style={{ color: "var(--color-primary)", marginBottom: '1rem' }}>{error}</p>}
+                    <button type="submit" disabled={loading} style={{ width: '100%' }}>
+                        {loading ? "Prijava..." : "Prijavi se"}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }
