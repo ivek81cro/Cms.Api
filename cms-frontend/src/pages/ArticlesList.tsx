@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { type Article, getArticles } from "../api/articles";
+import { Container, Row, Col, Card, Spinner, Alert } from "react-bootstrap";
 
 export function ArticlesList() {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -14,45 +15,68 @@ export function ArticlesList() {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <div className="container"><p>Učitavanje...</p></div>;
-    if (error) return <div className="container"><p style={{ color: "red" }}>{error}</p></div>;
+    if (loading) {
+        return (
+            <Container className="text-center mt-5">
+                <Spinner animation="border" variant="warning" />
+                <p className="mt-3">Učitavanje...</p>
+            </Container>
+        );
+    }
+    
+    if (error) {
+        return (
+            <Container className="mt-5">
+                <Alert variant="danger">{error}</Alert>
+            </Container>
+        );
+    }
 
-    // Prikazuj samo objavljene članke
     const published = articles.filter(a => a.isPublished);
 
     return (
         <>
             <section className="hero">
-                <div className="container">
-                    <h1>Moto Gymkhana Croatia</h1>
-                    <p>Škola sigurne vožnje • Treninzi • Natjecanja</p>
-                </div>
+                <Container>
+                    <h1>CMS TypeScrypt Demo</h1>
+                    <p>Demo system for simple CMS</p>
+                </Container>
             </section>
 
-            <div className="container">
-                <h2>Najnovije Vijesti</h2>
-                <div className="cards">
+            <Container>
+                <h2 className="mb-4">Najnovije Vijesti</h2>
+                <Row>
                     {published.map(a => (
-                        <article key={a.id} className="card">
-                            <h2 className="card__title">
-                                <Link to={`/articles/${a.id}`}>{a.title}</Link>
-                            </h2>
-                            {a.publishedAt && (
-                                <div className="article-meta">
-                                    Objavljeno: {new Date(a.publishedAt).toLocaleDateString('hr-HR')}
-                                </div>
-                            )}
-                            <p className="card__excerpt">{a.excerpt}</p>
-                            <Link to={`/articles/${a.id}`} className="navbar__link">
-                                Pročitaj više →
-                            </Link>
-                        </article>
+                        <Col key={a.id} xs={12} md={6} lg={4} className="mb-4">
+                            <Card className="h-100 card-custom">
+                                <Card.Body>
+                                    <Card.Title>
+                                        <Link to={`/articles/${a.id}`} className="text-decoration-none">
+                                            {a.title}
+                                        </Link>
+                                    </Card.Title>
+                                    {a.publishedAt && (
+                                        <Card.Subtitle className="mb-2 text-secondary">
+                                            {new Date(a.publishedAt).toLocaleDateString('hr-HR')}
+                                        </Card.Subtitle>
+                                    )}
+                                    <Card.Text className="text-secondary">
+                                        {a.excerpt}
+                                    </Card.Text>
+                                    <Link to={`/articles/${a.id}`} className="btn btn-outline-warning btn-sm">
+                                        Pročitaj više →
+                                    </Link>
+                                </Card.Body>
+                            </Card>
+                        </Col>
                     ))}
                     {published.length === 0 && (
-                        <p style={{ color: "var(--color-muted)" }}>Nema objavljenih članaka.</p>
+                        <Col>
+                            <p className="text-muted">Nema objavljenih članaka.</p>
+                        </Col>
                     )}
-                </div>
-            </div>
+                </Row>
+            </Container>
         </>
     );
 }

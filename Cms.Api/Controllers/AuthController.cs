@@ -15,15 +15,18 @@ public class AuthController : ControllerBase
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IConfiguration _config;
+    private readonly ILogger<AuthController> _logger;
 
     public AuthController(
         UserManager<IdentityUser> userManager,
         SignInManager<IdentityUser> signInManager,
-        IConfiguration config)
+        IConfiguration config,
+        ILogger<AuthController> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _config = config;
+        _logger = logger;
     }
 
     // POST: /api/auth/register
@@ -43,7 +46,8 @@ public class AuthController : ControllerBase
         var user = new IdentityUser
         {
             UserName = request.Email,
-            Email = request.Email
+            Email = request.Email,
+            EmailConfirmed = true // Automatski potvrdi email
         };
 
         var result = await _userManager.CreateAsync(user, request.Password);
@@ -57,6 +61,8 @@ public class AuthController : ControllerBase
 
             return ValidationProblem(ModelState);
         }
+
+        _logger.LogInformation("New user registered: {Email}", user.Email);
 
         var tokenString = GenerateJwtToken(user, out var expiresAt);
 
@@ -78,16 +84,41 @@ public class AuthController : ControllerBase
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
+            _logger.LogWarning("Login attempt for non-existent user: {Email}", request.Email);
+            return Unauthorized(new { error = "Neispravni podaci za prijavu." });
+        }
+
+        _logger.LogInformation("User found: {Email}, EmailConfirmed: {EmailConfirmed}", 
+            user.Email, user.EmailConfirmed);
+
+        // Provjera lozinke
+        var passwordCheck = await _userManager.CheckPasswordAsync(user, request.Password);
+        _logger.LogInformation("Password check result for {Email}: {PasswordCheck}", user.Email, passwordCheck);
+
+        if (!passwordCheck)
+        {
+            _logger.LogWarning("Invalid password for user: {Email}", request.Email);
             return Unauthorized(new { error = "Neispravni podaci za prijavu." });
         }
 
         var result = await _signInManager.CheckPasswordSignInAsync(
             user, request.Password, lockoutOnFailure: false);
 
+        _logger.LogInformation("SignIn result for {Email} - Succeeded: {Succeeded}, IsLockedOut: {IsLockedOut}, IsNotAllowed: {IsNotAllowed}", 
+            user.Email, result.Succeeded, result.IsLockedOut, result.IsNotAllowed);
+
         if (!result.Succeeded)
         {
+            if (result.IsNotAllowed)
+            {
+                _logger.LogWarning("Sign in not allowed for user: {Email}", request.Email);
+                return Unauthorized(new { error = "Prijava nije dozvoljena. Email nije potvrđen." });
+            }
+            
             return Unauthorized(new { error = "Neispravni podaci za prijavu." });
         }
+
+        _logger.LogInformation("User {Email} logged in successfully", user.Email);
 
         var tokenString = GenerateJwtToken(user, out var expiresAt);
 

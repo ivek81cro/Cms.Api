@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { type Article, getArticle } from "../api/articles";
+import { Container, Spinner, Alert, Badge } from "react-bootstrap";
 
 export function ArticleDetails() {
     const { id } = useParams<{ id: string }>();
@@ -25,26 +26,61 @@ export function ArticleDetails() {
         return () => { cancelled = true; };
     }, [articleId, isInvalidId]);
 
-    if (isInvalidId) return <div className="container"><p style={{ color: "var(--color-primary)" }}>Neispravan ID članka.</p></div>;
-    if (loading) return <div className="container"><p>Učitavanje...</p></div>;
-    if (error) return <div className="container"><p style={{ color: "var(--color-primary)" }}>{error}</p></div>;
-    if (!article) return <div className="container"><p>Članak nije pronađen.</p></div>;
+    if (isInvalidId) {
+        return (
+            <Container className="mt-5">
+                <Alert variant="danger">Neispravan ID članka.</Alert>
+            </Container>
+        );
+    }
+    
+    if (loading) {
+        return (
+            <Container className="text-center mt-5">
+                <Spinner animation="border" variant="warning" />
+                <p className="mt-3">Učitavanje...</p>
+            </Container>
+        );
+    }
+    
+    if (error) {
+        return (
+            <Container className="mt-5">
+                <Alert variant="danger">{error}</Alert>
+            </Container>
+        );
+    }
+    
+    if (!article) {
+        return (
+            <Container className="mt-5">
+                <Alert variant="warning">Članak nije pronađen.</Alert>
+            </Container>
+        );
+    }
 
     return (
-        <div className="container">
-            <p><Link to="/" style={{color: 'var(--color-primary)', fontWeight: 500}}>{`← Natrag na članke`}</Link></p>
-            <h1>{article.title}</h1>
+        <Container>
+            <Link to="/" className="btn btn-outline-warning btn-sm mb-3">
+                ← Natrag na članke
+            </Link>
+            
+            <h1 className="mb-3">{article.title}</h1>
+            
             {article.publishedAt && (
-                <p className="article-meta">
-                    Objavljeno: {new Date(article.publishedAt).toLocaleDateString('hr-HR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    })}
+                <p className="text-muted mb-4">
+                    <Badge bg="secondary">
+                        {new Date(article.publishedAt).toLocaleDateString('hr-HR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
+                    </Badge>
                 </p>
             )}
+            
             <div className="article-details" dangerouslySetInnerHTML={{ __html: article.contentHtml }} />
-        </div>
+        </Container>
     );
 }
 

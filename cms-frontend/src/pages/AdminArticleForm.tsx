@@ -7,6 +7,7 @@ import {
     createArticle,
     updateArticle,
 } from "../api/articles";
+import { Container, Form, Button, Alert, Spinner, Card } from "react-bootstrap";
 
 function slugify(text: string): string {
     return text
@@ -102,102 +103,109 @@ export function AdminArticleForm() {
         }
     };
 
-    if (loading) return <div className="container"><p>Učitavanje...</p></div>;
-    if (error) return <div className="container"><p style={{color: 'var(--color-primary)'}}>{error}</p></div>;
+    if (loading) {
+        return (
+            <Container className="text-center mt-5">
+                <Spinner animation="border" variant="warning" />
+                <p className="mt-3">Učitavanje...</p>
+            </Container>
+        );
+    }
+    
+    if (error && !saving) {
+        return (
+            <Container className="mt-5">
+                <Alert variant="danger">{error}</Alert>
+            </Container>
+        );
+    }
 
     return (
-        <div className="container" style={{ maxWidth: 900 }}>
-            <h1>{isEditMode ? "Uredi članak" : "Novi članak"}</h1>
+        <Container style={{ maxWidth: 900 }}>
+            <h1 className="mb-4">{isEditMode ? "Uredi članak" : "Novi članak"}</h1>
 
-            <div style={{
-                background: 'var(--color-bg-card)',
-                padding: '2rem',
-                borderRadius: '12px',
-                border: '1px solid var(--color-border)'
-            }}>
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: "1rem" }}>
-                        <label>
-                            Naslov
-                        </label>
-                        <input
-                            type="text"
-                            name="title"
-                            value={form.title}
-                            onChange={handleChange}
-                            onBlur={handleTitleBlur}
-                            required
-                        />
-                    </div>
+            <Card className="card-custom">
+                <Card.Body>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group className="mb-3" controlId="formTitle">
+                            <Form.Label>Naslov</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="title"
+                                value={form.title}
+                                onChange={handleChange}
+                                onBlur={handleTitleBlur}
+                                required
+                            />
+                        </Form.Group>
 
-                    <div style={{ marginBottom: "1rem" }}>
-                        <label>
-                            Slug (URL)
-                        </label>
-                        <input
-                            type="text"
-                            name="slug"
-                            value={form.slug}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                        <Form.Group className="mb-3" controlId="formSlug">
+                            <Form.Label>Slug (URL)</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="slug"
+                                value={form.slug}
+                                onChange={handleChange}
+                                required
+                            />
+                            <Form.Text className="text-muted">
+                                Automatski se generira iz naslova
+                            </Form.Text>
+                        </Form.Group>
 
-                    <div style={{ marginBottom: "1rem" }}>
-                        <label>
-                            Kratki sažetak
-                        </label>
-                        <textarea
-                            name="excerpt"
-                            value={form.excerpt}
-                            onChange={handleChange}
-                            rows={3}
-                        />
-                    </div>
+                        <Form.Group className="mb-3" controlId="formExcerpt">
+                            <Form.Label>Kratki sažetak</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                name="excerpt"
+                                value={form.excerpt}
+                                onChange={handleChange}
+                                rows={3}
+                            />
+                        </Form.Group>
 
-                    <div style={{ marginBottom: "1rem" }}>
-                        <label>
-                            Sadržaj (HTML ili tekst)
-                        </label>
-                        <textarea
-                            name="contentHtml"
-                            value={form.contentHtml}
-                            onChange={handleChange}
-                            rows={12}
-                        />
-                    </div>
+                        <Form.Group className="mb-3" controlId="formContent">
+                            <Form.Label>Sadržaj (HTML ili tekst)</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                name="contentHtml"
+                                value={form.contentHtml}
+                                onChange={handleChange}
+                                rows={12}
+                            />
+                        </Form.Group>
 
-                    <div style={{ marginBottom: "1.5rem" }}>
-                        <label style={{display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer'}}>
-                            <input
+                        <Form.Group className="mb-4" controlId="formPublished">
+                            <Form.Check
                                 type="checkbox"
                                 name="isPublished"
+                                label="Objavljeno"
                                 checked={form.isPublished}
                                 onChange={handleChange}
-                                style={{width: 'auto'}}
                             />
-                            Objavljeno
-                        </label>
-                    </div>
+                        </Form.Group>
 
-                    <div style={{display: 'flex', gap: '12px'}}>
-                        <button type="submit" disabled={saving}>
-                            {saving ? "Spremam..." : "Spremi"}
-                        </button>
-                        <button 
-                            type="button" 
-                            onClick={() => navigate("/admin/articles")}
-                            style={{
-                                background: 'transparent',
-                                border: '1px solid var(--color-border)',
-                                color: 'var(--color-text)'
-                            }}
-                        >
-                            Odustani
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                        {error && <Alert variant="danger" className="mb-3">{error}</Alert>}
+
+                        <div className="d-flex gap-2">
+                            <Button 
+                                variant="warning" 
+                                type="submit" 
+                                disabled={saving}
+                            >
+                                {saving ? "Spremam..." : "Spremi"}
+                            </Button>
+                            <Button 
+                                variant="secondary"
+                                type="button" 
+                                onClick={() => navigate("/admin/articles")}
+                            >
+                                Odustani
+                            </Button>
+                        </div>
+                    </Form>
+                </Card.Body>
+            </Card>
+        </Container>
     );
 }

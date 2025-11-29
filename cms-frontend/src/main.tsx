@@ -10,6 +10,7 @@ import { LoginPage } from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import { RequireAuth } from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthContext";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

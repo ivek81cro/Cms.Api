@@ -14,12 +14,12 @@ export function Layout({ children }: LayoutProps) {
             </main>
             <footer className="footer">
                 <div className="container">
-                    <p>&copy; {new Date().getFullYear()} Moto Gymkhana Croatia. Sva prava pridržana.</p>
+                    <p>&copy; {new Date().getFullYear()} Bytelab - obrt</p>
                     <p>
-                        <a href="mailto:info@motogymkhana.hr">info@motogymkhana.hr</a>{" "}
+                        <a href="mailto:info@motogymkhana.hr">hello@bytelab.hr</a>{" "}
                         |
-                        <a href="tel:+385992360091" style={{ marginLeft: "8px" }}>
-                            +385 (0)99 236 0091
+                        <a href="tel:+3859985218101" style={{ marginLeft: "8px" }}>
+                            +385 (0)99 852 1810
                         </a>
                     </p>
                 </div>

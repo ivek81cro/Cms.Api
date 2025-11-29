@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { login as apiLogin } from "../api/auth";
 import { useAuth, type AuthResponse } from "../auth/AuthContext";
+import { Container, Form, Button, Alert, Card } from "react-bootstrap";
 
 interface LocationState {
     from?: { pathname: string };
@@ -39,43 +40,45 @@ export function LoginPage() {
     };
 
     return (
-        <div className="container" style={{ maxWidth: 500, marginTop: "3rem" }}>
-            <div style={{
-                background: 'var(--color-bg-card)',
-                padding: '2rem',
-                borderRadius: '12px',
-                border: '1px solid var(--color-border)'
-            }}>
-                <h1>Prijava</h1>
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: "1rem" }}>
-                        <label>
-                            E-mail
-                        </label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div style={{ marginBottom: "1rem" }}>
-                        <label>
-                            Lozinka
-                        </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {error && <p style={{ color: "var(--color-primary)", marginBottom: '1rem' }}>{error}</p>}
-                    <button type="submit" disabled={loading} style={{ width: '100%' }}>
-                        {loading ? "Prijava..." : "Prijavi se"}
-                    </button>
-                </form>
-            </div>
-        </div>
+        <Container style={{ maxWidth: 500, marginTop: "3rem" }}>
+            <Card className="card-custom">
+                <Card.Body>
+                    <h1 className="mb-4">Prijava</h1>
+                    
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group className="mb-3" controlId="formEmail">
+                            <Form.Label>E-mail</Form.Label>
+                            <Form.Control
+                                type="email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formPassword">
+                            <Form.Label>Lozinka</Form.Label>
+                            <Form.Control
+                                type="password"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                required
+                            />
+                        </Form.Group>
+
+                        {error && <Alert variant="danger">{error}</Alert>}
+
+                        <Button 
+                            variant="warning" 
+                            type="submit" 
+                            disabled={loading}
+                            className="w-100"
+                        >
+                            {loading ? "Prijava..." : "Prijavi se"}
+                        </Button>
+                    </Form>
+                </Card.Body>
+            </Card>
+        </Container>
     );
 }

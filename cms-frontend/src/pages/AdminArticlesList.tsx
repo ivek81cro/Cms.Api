@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { type Article, getArticles, deleteArticle } from "../api/articles";
+import { Container, Button, Table, Spinner, Alert, Badge } from "react-bootstrap";
 
 export function AdminArticlesList() {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -20,7 +21,6 @@ export function AdminArticlesList() {
     };
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         load();
     }, []);
 
@@ -35,69 +35,86 @@ export function AdminArticlesList() {
         }
     };
 
-    if (loading) return <div className="container"><p>Učitavanje...</p></div>;
-    if (error) return <div className="container"><p style={{color: 'var(--color-primary)'}}>{error}</p></div>;
+    if (loading) {
+        return (
+            <Container className="text-center mt-5">
+                <Spinner animation="border" variant="warning" />
+                <p className="mt-3">Učitavanje...</p>
+            </Container>
+        );
+    }
+    
+    if (error) {
+        return (
+            <Container className="mt-5">
+                <Alert variant="danger">{error}</Alert>
+            </Container>
+        );
+    }
 
     return (
-        <div className="container">
-            <h1>Admin – Članci</h1>
-
-            <button
-                onClick={() => navigate("/admin/articles/new")}
-                style={{ marginBottom: "1.5rem" }}
-            >
-                + Novi članak
-            </button>
+        <Container>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h1>Admin – Članci</h1>
+                <Button 
+                    variant="warning"
+                    onClick={() => navigate("/admin/articles/new")}
+                >
+                    + Novi članak
+                </Button>
+            </div>
 
             {articles.length === 0 ? (
-                <p style={{color: 'var(--color-muted)'}}>Nema članaka.</p>
+                <Alert variant="info">Nema članaka.</Alert>
             ) : (
-                <div style={{
-                    background: 'var(--color-bg-card)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: '12px',
-                    padding: '24px',
-                    overflowX: 'auto'
-                }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <div className="table-responsive">
+                    <Table striped hover variant="dark" className="table-custom">
                         <thead>
                             <tr>
-                                <th style={{ textAlign: "left", borderBottom: "2px solid var(--color-border)", paddingBottom: '12px', color: 'var(--color-primary)' }}>Naslov</th>
-                                <th style={{ textAlign: "left", borderBottom: "2px solid var(--color-border)", paddingBottom: '12px', color: 'var(--color-primary)' }}>Objavljen</th>
-                                <th style={{ textAlign: "left", borderBottom: "2px solid var(--color-border)", paddingBottom: '12px', color: 'var(--color-primary)' }}>Akcije</th>
+                                <th>Naslov</th>
+                                <th>Status</th>
+                                <th>Datum</th>
+                                <th style={{width: '200px'}}>Akcije</th>
                             </tr>
                         </thead>
                         <tbody>
                             {articles.map(a => (
-                                <tr key={a.id} style={{borderBottom: '1px solid var(--color-border)'}}>
-                                    <td style={{ padding: "16px 0" }}>{a.title}</td>
-                                    <td>{a.isPublished ? "Da" : "Ne"}</td>
+                                <tr key={a.id}>
+                                    <td>{a.title}</td>
+                                    <td>
+                                        {a.isPublished ? (
+                                            <Badge bg="success">Objavljeno</Badge>
+                                        ) : (
+                                            <Badge bg="secondary">Skica</Badge>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {a.publishedAt 
+                                            ? new Date(a.publishedAt).toLocaleDateString('hr-HR')
+                                            : '-'
+                                        }
+                                    </td>
                                     <td>
                                         <Link
                                             to={`/admin/articles/${a.id}`}
-                                            style={{ marginRight: "12px", color: 'var(--color-primary)', fontWeight: 500 }}
+                                            className="btn btn-sm btn-outline-warning me-2"
                                         >
                                             Uredi
                                         </Link>
-                                        <button 
+                                        <Button 
+                                            variant="outline-danger"
+                                            size="sm"
                                             onClick={() => handleDelete(a.id)}
-                                            style={{
-                                                background: 'transparent',
-                                                border: '1px solid #ef4444',
-                                                color: '#ef4444',
-                                                padding: '6px 12px',
-                                                fontSize: '0.9rem'
-                                            }}
                                         >
                                             Obriši
-                                        </button>
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
-                    </table>
+                    </Table>
                 </div>
             )}
-        </div>
+        </Container>
     );
 }
